@@ -11,6 +11,6 @@ class base(baseTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
       
-    self.content_panel.add_component((home()))
+    # self.content_panel.add_component((home()))
 
   
