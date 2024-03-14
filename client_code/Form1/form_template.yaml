@@ -21,6 +21,7 @@ components:
     type: Link
     components: []
 - name: title
-  properties: {text: 'Connectivia Labs Cognitive ', foreground: 'theme:Secondary 500'}
+  properties: {text: 'Connectivia Labs Cognitive ', foreground: 'theme:Secondary 500',
+    role: null}
   type: Link
   layout_properties: {slot: title}
