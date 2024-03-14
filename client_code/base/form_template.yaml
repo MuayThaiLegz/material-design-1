@@ -10,7 +10,7 @@ components:
   layout_properties: {slot: default}
   components:
   - name: welcomeimage
-    properties: {source: _/theme/Saudi-Arabia-SEZ-AA-3.png, display_mode: zoom_to_fill,
+    properties: {source: _/theme/neom_future_of_civilization.jpg, display_mode: zoom_to_fill,
       height: 728.7777709960938, horizontal_align: center, spacing_above: none, spacing_below: none,
       vertical_align: center}
     type: Image
