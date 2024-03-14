@@ -13,15 +13,17 @@ components:
   name: navbar_links
   layout_properties: {slot: nav-right}
   components:
-  - name: link_2
-    properties: {}
+  - name: verticals
+    properties: {text: Workflow, icon: 'fa:plus', bold: false, italic: false}
     type: Link
-  - name: link_1
-    properties: {}
+    layout_properties: {}
+  - name: login
+    properties: {text: Log in, icon: 'fa:rss', bold: false, italic: false}
     type: Link
+    layout_properties: {}
     components: []
-- name: title
-  properties: {text: 'Connectivia Labs Cognitive ', foreground: 'theme:Secondary 500',
-    role: null}
+- name: tittle
+  properties: {text: 'Cognitive ', bold: false, underline: false, font_size: 28}
   type: Link
   layout_properties: {slot: title}
+  event_bindings: {click: tittle_click}
