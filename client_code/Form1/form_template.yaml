@@ -1,13 +1,26 @@
 is_package: true
 container:
   type: HtmlTemplate
-  properties: {html: '@theme:standard-page.html'}
+  properties: {html: '@theme:standard-page.html', visible: true, background: '', foreground: '#289bcc'}
 components:
 - type: ColumnPanel
   properties: {}
   name: content_panel
   layout_properties: {slot: default}
+  components: []
 - type: FlowPanel
   properties: {}
   name: navbar_links
   layout_properties: {slot: nav-right}
+  components:
+  - name: link_2
+    properties: {}
+    type: Link
+  - name: link_1
+    properties: {}
+    type: Link
+    components: []
+- name: title
+  properties: {text: 'Connectivia Labs Cognitive ', foreground: 'theme:Secondary 500'}
+  type: Link
+  layout_properties: {slot: title}

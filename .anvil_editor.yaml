@@ -4,5 +4,6 @@ unique_ids:
   modules: {}
   server_modules: {}
   assets:
+    logoM.png: '1710385268135164859802049.1392'
     standard-page.html: EMU4R2V37CBQBPHOIGDDFWIDNS5UCDIG
     theme.css: 3UUDJYDCCSK57HNXW6NMC5RSTDSGSXAI
