@@ -39,3 +39,16 @@ components:
     layout_properties: {grid_position: 'AXBQUN,GOOHYL', row_background: 'theme:Primary
         500'}
     components: []
+  - name: login
+    properties: {content: '# Log In', align: left, font_size: 22, foreground: 'theme:White'}
+    type: RichText
+    layout_properties: {grid_position: 'UMZUQN,PFJWYG'}
+  - name: useremail
+    properties: {placeholder: Email, background: 'theme:White', text: '', align: center,
+      bold: true, italic: true}
+    type: TextBox
+    layout_properties: {grid_position: 'CTOTFJ,XIBQGZ'}
+  - name: text_box_2
+    properties: {placeholder: Password}
+    type: TextBox
+    layout_properties: {grid_position: 'DCJDJN,XXAHNN'}
