@@ -2,7 +2,7 @@ container: {type: ColumnPanel}
 components:
 - name: main_image
   properties: {source: _/theme/logoM.png, display_mode: shrink_to_fit, height: 113.09091186523438,
-    background: '#063747', horizontal_align: center, vertical_align: top}
+    background: '#023645', horizontal_align: center, vertical_align: top, role: null}
   type: Image
   layout_properties: {grid_position: 'OCVNCC,MEXFRA', row_background: '', full_width_row: false}
 - name: homeinfo

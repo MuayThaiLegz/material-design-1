@@ -1,8 +1,9 @@
-from ._anvil_designer import baseTemplate
+from ._anvil_designer import homeTemplate
 from anvil import *
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+import anvil.users
 
 class home(homeTemplate):
   def __init__(self, **properties):
