@@ -36,13 +36,13 @@ components:
       bold: true, italic: true, spacing_above: large}
     type: TextBox
     layout_properties: {grid_position: 'CTOTFJ,XIBQGZ'}
-    event_bindings: {pressed_enter: useremail_pressed_enter}
+    event_bindings: {}
   - name: password
     properties: {placeholder: Password, background: 'theme:White', bold: true, align: center,
       italic: true, underline: false}
     type: TextBox
     layout_properties: {grid_position: 'DCJDJN,XXAHNN'}
-    event_bindings: {pressed_enter: password_pressed_enter}
+    event_bindings: {}
   - name: button_1
     properties: {text: Log in, background: 'theme:Primary 700', foreground: 'theme:White',
       icon: 'fa:external-link-square', font: '20'}

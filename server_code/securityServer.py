@@ -1,3 +1,5 @@
+# securityserver.py
+
 import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
@@ -48,6 +50,7 @@ def is_secure_password(password):
     ])
 
 # Database management functions
+@anvil.server.callable
 def create_db():
     """Initialize the database and create the 'users' table if not exists."""
     conn = sqlite3.connect(DATABASE_FILE)
@@ -66,19 +69,19 @@ def create_db():
     conn.commit()
     conn.close()
 
-
-def sign_up():
+@anvil.server.callable
+def sign_up(email, password):
     """Sign up a new user with all required attributes, allowing up to 3 attempts for valid input."""
     attempts = 0
 
     while attempts < 3:
-        email = input('Email: ')
+        email = email
         if not is_valid_email(email):
             print("Invalid email format. Please try again.")
             attempts += 1
             continue
 
-        password = input('Password: ')
+        password = password
         if not is_secure_password(password):
             print("Password does not meet security criteria. Please try again.")
             attempts += 1
@@ -107,11 +110,11 @@ def sign_up():
     print("Maximum attempts reached. Please try again later.")
 
 
-
-def login():
+@anvil.server.callable
+def login(email, password):
     """Authenticate an existing user."""
-    email = input('Email: ').strip()
-    password = input('Password: ').strip()
+    email = email
+    password = password
 
     user = get_user(email)
     if user and verify_password(user[4], password):
