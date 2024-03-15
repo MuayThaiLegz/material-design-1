@@ -1,8 +1,7 @@
 is_package: true
 container:
   type: HtmlTemplate
-  properties: {html: '@theme:standard-page.html', visible: true, background: '', foreground: 'theme:Primary
-      500'}
+  properties: {html: '@theme:standard-page.html', visible: true, background: '', foreground: ''}
 components:
 - type: ColumnPanel
   properties: {spacing_above: none, spacing_below: none}
@@ -10,11 +9,13 @@ components:
   layout_properties: {slot: default}
   components:
   - name: welcomeimage
-    properties: {source: _/theme/neom_future_of_civilization.jpg, display_mode: zoom_to_fill,
-      height: 728.7777709960938, horizontal_align: center, spacing_above: none, spacing_below: none,
+    properties: {source: _/theme/neom_future_of_civilization.jpg, display_mode: fill_width,
+      height: 766.22216796875, horizontal_align: center, spacing_above: none, spacing_below: none,
       vertical_align: center}
     type: Image
-    layout_properties: {grid_position: 'CCJGQQ,QNOMAB', full_width_row: true}
+    layout_properties: {grid_position: 'CCJGQQ,QNOMAB', full_width_row: true, row_background: 'theme:Primary
+        700'}
+    event_bindings: {hide: welcomeimage_hide}
 - type: FlowPanel
   properties: {}
   name: navbar_links
@@ -26,15 +27,15 @@ components:
   type: ColumnPanel
   layout_properties: {slot: left-nav}
   components:
-  - name: spacer_1
-    properties: {height: 102.22219848632812}
-    type: Spacer
-    layout_properties: {grid_position: 'QVEWTF,AQMKOG'}
   - name: clabslogo
     properties: {source: _/theme/logoM.png, height: 189.77774047851562, vertical_align: top,
       horizontal_align: left, spacing_above: large, spacing_below: large, display_mode: fill_width}
     type: Image
     layout_properties: {grid_position: 'AQENAO,CQXLIH'}
+  - name: spacer_1
+    properties: {height: 102.22219848632812}
+    type: Spacer
+    layout_properties: {grid_position: 'WHURWG,PUDLBR'}
   - name: helloworld
     properties: {content: "### Welcome to the Cognitive AIoT Hub! \ud83d\ude80  \n\
         *Elevate your space with smart, AI-driven IoT solutions.*\n", font_size: 14,

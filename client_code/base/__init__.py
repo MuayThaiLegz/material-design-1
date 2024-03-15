@@ -13,4 +13,8 @@ class base(baseTemplate):
       
     # self.content_panel.add_component((home()))
 
+  def welcomeimage_hide(self, **event_args):
+    """This method is called when the Image is removed from the screen"""
+    pass
+
   
