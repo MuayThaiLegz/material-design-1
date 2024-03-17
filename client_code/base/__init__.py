@@ -1,3 +1,5 @@
+# baseTemplate.py
+
 from ._anvil_designer import baseTemplate
 from anvil import *
 import anvil.server
@@ -17,6 +19,8 @@ class base(baseTemplate):
   def button_signup_click(self, **event_args):
     email = self.useremail.text
     password = self.password.text
+    anvil.server.call('create_db')
+    
     message = anvil.server.call('sign_up', email, password)
     alert(message)
 
