@@ -8,22 +8,20 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..home import home
+from ..signup import signup
 
 class base(baseTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-      
-    # self.content_panel.add_component((home()))
+ 
+  def link_signup_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    # Brings up sign up page
+    # self.content_panel.clear()
+    self.content_panel.add_component(signup())
 
-  def button_signup_click(self, **event_args):
-    email = self.useremail.text
-    password = self.password.text
-    anvil.server.call('create_db')
-    
-    message = anvil.server.call('sign_up', email, password)
-    alert(message)
-
+        
   def button_login_click(self, **event_args):
     email = self.useremail.text
     password = self.password.text
@@ -34,12 +32,7 @@ class base(baseTemplate):
         self.content_panel.clear()
         self.content_panel.add_component(home())
 
-  def link_signup_click(self, **event_args):
-    """This method is called when the link is clicked"""
-    email = self.useremail.text
-    password = self.password.text
-    message = anvil.server.call('sign_up', email, password)
-    alert(message)
+
     
 
   
