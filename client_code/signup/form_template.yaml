@@ -3,26 +3,34 @@ container:
   properties: {col_spacing: small, background: 'theme:Primary 500'}
 components:
 - name: column_panel_signup
-  properties: {background: 'theme:Primary 700', foreground: ''}
+  properties: {background: 'theme:Primary 500', foreground: ''}
   type: ColumnPanel
   layout_properties: {grid_position: 'WBZURF,VZKSDM'}
   components:
   - name: signupemail
     properties: {placeholder: Enter Email, foreground: '', font_size: 20, align: center,
-      bold: true, italic: false, background: ''}
+      bold: true, italic: false, background: 'theme:White', enabled: true}
     type: TextBox
     layout_properties: {grid_position: 'UGFSUF,XEZXDB', row_background: '', full_width_row: false}
+    event_bindings: {show: signupemail_show, pressed_enter: signupemail_pressed_enter}
   - name: signuppassword
-    properties: {placeholder: Enter Username, align: center, bold: true, font_size: 19}
+    properties: {placeholder: Enter Username, align: center, bold: true, font_size: 20,
+      spacing_above: none, background: 'theme:White'}
     type: TextBox
     layout_properties: {grid_position: 'WOJCWB,NHYEGZ'}
   - name: signupconfirm
     properties: {text: 'Create New User
 
-        ', role: primary-color, icon: 'fa:address-card-o'}
+        ', role: primary-color, icon: 'fa:address-card-o', background: 'theme:Primary
+        700', spacing_above: large, spacing_below: large}
     type: Button
-    layout_properties: {grid_position: 'JNWEDL,ECBRAQ'}
+    layout_properties: {grid_position: 'JNWEDL,ECBRAQ', row_background: 'theme:Primary
+        500'}
     data_bindings:
     - {property: icon_align, code: 'self.item['''']', writeback: false}
     event_bindings: {click: button_signup_click}
+- name: signupimage
+  properties: {height: 679, source: _/theme/neom_future_of_civilization.jpg, display_mode: fill_width}
+  type: Image
+  layout_properties: {grid_position: 'GFFGBJ,GTDVZV'}
 is_package: true
