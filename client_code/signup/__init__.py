@@ -14,7 +14,7 @@ class signup(signupTemplate):
   def button_signup_click(self, **event_args):
     email = self.signupemail.text
     password = self.signuppassword.text
-    # anvil.server.call('create_db')
+    anvil.server.call('create_db')
     
     message = anvil.server.call('sign_up', email, password)
     alert(message)
