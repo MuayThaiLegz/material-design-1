@@ -3,13 +3,14 @@
 from ._anvil_designer import baseTemplate
 from anvil import *
 import anvil.server
-from anvil import open_url
 import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+# from anvil import open_url
 from ..home import home
 from ..signup import signup
+import anvil.js
 
 class base(baseTemplate):
   def __init__(self, **properties):
@@ -35,12 +36,4 @@ class base(baseTemplate):
 
   def websitelink_click(self, **event_args):
     """This method is called when the link is clicked"""
-     open_url("https://connectivialabs.com/")
-    # https://connectivialabs.com/
-    pass
-
-
-    
-
-  
-
+    anvil.js.window.location.href = "https://connectivialabs.com/"
