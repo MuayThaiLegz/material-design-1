@@ -7,7 +7,6 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-# from anvil import open_url
 from ..home import home
 from ..signup import signup
 import anvil.js
@@ -31,7 +30,7 @@ class base(baseTemplate):
     alert(message)
     if message == "Login successful!":
         # Optionally, redirect to another form upon successful login
-        self.content_panel.clear()
+        # self.content_panel.clear()
         self.content_panel.add_component(home())
 
   def websitelink_click(self, **event_args):
