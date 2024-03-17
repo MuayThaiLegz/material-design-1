@@ -35,19 +35,20 @@ components:
     properties: {placeholder: Email, background: 'theme:White', text: '', align: center,
       bold: true, italic: true, spacing_above: large}
     type: TextBox
-    layout_properties: {grid_position: 'CTOTFJ,XIBQGZ'}
-    event_bindings: {pressed_enter: useremail_pressed_enter}
+    layout_properties: {grid_position: 'CTOTFJ,XIBQGZ', row_background: ''}
+    event_bindings: {}
   - name: password
     properties: {placeholder: Password, background: 'theme:White', bold: true, align: center,
       italic: true, underline: false}
     type: TextBox
-    layout_properties: {grid_position: 'DCJDJN,XXAHNN'}
-    event_bindings: {pressed_enter: password_pressed_enter}
+    layout_properties: {grid_position: 'DCJDJN,XXAHNN', row_background: ''}
+    event_bindings: {}
   - name: button_1
     properties: {text: Log in, background: 'theme:Primary 700', foreground: 'theme:White',
       icon: 'fa:external-link-square', font: '20'}
     type: Button
     layout_properties: {grid_position: 'JXXREQ,RFSLZG'}
+    event_bindings: {click: button_login_click}
   - name: spacer_1
     properties: {height: 29}
     type: Spacer
@@ -66,3 +67,4 @@ components:
       properties: {height: 107}
       type: Spacer
       layout_properties: {grid_position: 'WOUNLF,OOBBJM'}
+    event_bindings: {click: link_signup_click}

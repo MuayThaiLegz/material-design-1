@@ -30,5 +30,13 @@ class base(baseTemplate):
         self.content_panel.clear()
         self.content_panel.add_component(home())
 
+  def link_signup_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    email = self.useremail.text
+    password = self.password.text
+    message = anvil.server.call('sign_up', email, password)
+    alert(message)
+    
+
   
 
