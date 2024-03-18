@@ -19,7 +19,7 @@ class base(baseTemplate):
   def link_signup_click(self, **event_args):
     """This method is called when the link is clicked"""
     # Brings up sign up page
-    # self.content_panel.clear()
+    self.content_panel.clear()
     self.content_panel.add_component(signup())
 
         

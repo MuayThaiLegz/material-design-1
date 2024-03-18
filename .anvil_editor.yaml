@@ -8,8 +8,11 @@ unique_ids:
   server_modules:
     securityServer: '1710525005385267972803236.17902'
   assets:
+    ? DALL·E 2024-03-14 15.47.14 - A photorealistic and highly detailed image of Riyadh cityscape at night with a clear sky and the skyline illuminated with lights, showcasing prominent.jpg
+    : '1710722935910624087592091.2916'
     logoM.png: '1710385268135164859802049.1392'
     neom_future_of_civilization.jpg: '1710458321202534435501090.0612'
+    neom_future_of_civilization.png: '1710722769770527465083003.49615'
     saudifromspace.jpg: '1710517870035348672489859.9385'
     standard-page.html: EMU4R2V37CBQBPHOIGDDFWIDNS5UCDIG
     theme.css: 3UUDJYDCCSK57HNXW6NMC5RSTDSGSXAI
