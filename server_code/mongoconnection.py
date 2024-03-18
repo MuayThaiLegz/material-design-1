@@ -74,20 +74,43 @@ def store_data(db_name, collection_name, file, connString):
     print(file_like_object)
     if file.content_type == 'text/csv':
         df = pd.read_csv(file_like_object)
-    # elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-    #     df = pd.read_excel(file_like_object)
-    # elif file.content_type == 'application/json':
-    #     df = pd.read_json(file_like_object)
+    elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        df = pd.read_excel(file_like_object)
+    elif file.content_type == 'application/json':
+        df = pd.read_json(file_like_object)
     else:
         return False, "Unsupported file type."
 
     # Process and store the DataFrame
-    # processed_df, _, _, _, _, _, _ = process_datafile(df)
+    processed_df, _, _, _, _, _, _ = process_datafile(df)
     records = df.to_dict('records')
     collection.insert_many(records)
     client.close()
     return True, f"Data saved successfully in {sanitized_db_name}/{sanitized_collection_name}."
-    
+
+@anvil.server.callable
+def process_and_load_file(file, connString):
+    try:
+        client = MongoClient(connString)
+        file_like_object = BytesIO(file.get_bytes())
+        
+        if file.content_type == 'text/csv':
+            df = pd.read_csv(file_like_object)
+        elif file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            df = pd.read_excel(file_like_object)
+        elif file.content_type == 'application/json':
+            df = pd.read_json(file_like_object)
+
+        df = process_datafile(df)
+        uploaded_fileName = file.name.rsplit('.', 1)[0]
+        db = client['AnvilVille']
+        collection = db[uploaded_fileName]
+        collection.insert_many(df.to_dict('records'))
+        client.close()
+        return True, f"Data saved successfully in {uploaded_fileName}."
+    except Exception as e:
+        return False, f"Failed to process file: {str(e)}"
+      
 @anvil.server.callable
 def initiate_file_processing(file, db_name, collection_name, connString):
     print('Entering')

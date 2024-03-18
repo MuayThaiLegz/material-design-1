@@ -98,71 +98,71 @@ def process_datafile(df):
 #   print("Hello, " + name + "!")
 #   return 42
 #
-def clean_column_names(columns):
-    """
-    Cleans column names using a predefined pattern.
-    """
-    pattern = r'filtered/application/\d+/device/[^/]+/event/up\.(.+)'
-    cleaned_columns = []
-    for col in columns:
-        match = re.search(pattern, col)
-        col = match.group(1) if match else col.split('/')[-1]
-        col = col.split('.', 1)[-1] if '.' in col else col
-        cleaned_columns.append(col)
-    return cleaned_columns
+# def clean_column_names(columns):
+#     """
+#     Cleans column names using a predefined pattern.
+#     """
+#     pattern = r'filtered/application/\d+/device/[^/]+/event/up\.(.+)'
+#     cleaned_columns = []
+#     for col in columns:
+#         match = re.search(pattern, col)
+#         col = match.group(1) if match else col.split('/')[-1]
+#         col = col.split('.', 1)[-1] if '.' in col else col
+#         cleaned_columns.append(col)
+#     return cleaned_columns
 
-def identify_datetime_cols(df, datetime_keywords):
-    """
-    Identifies columns that are likely to be datetime based on their names.
-    """
-    datetime_cols = [col for col in df.columns if any(keyword in col for keyword in datetime_keywords) or df[col].dtype == 'object']
-    return datetime_cols
+# def identify_datetime_cols(df, datetime_keywords):
+#     """
+#     Identifies columns that are likely to be datetime based on their names.
+#     """
+#     datetime_cols = [col for col in df.columns if any(keyword in col for keyword in datetime_keywords) or df[col].dtype == 'object']
+#     return datetime_cols
 
-def process_datafile(df):
-    """
-    Processes the DataFrame to clean column names, identify datetime columns, and create additional features.
-    """
-    # Define keywords to identify datetime columns
+# def process_datafile(df):
+#     """
+#     Processes the DataFrame to clean column names, identify datetime columns, and create additional features.
+#     """
+#     # Define keywords to identify datetime columns
     
-    datetime_keywords = set(['rx.ts', 'info.datecreated', 'date', 'time',
-                        'iothubenqueuedtime' 'timestamp', 'utc', 'published',
-                        'publishedat','payload.publishedat', 'datecreated',
-                        'payload.timestamp', 'noted_date', 'created_at',
-                        'updated_at', 'modified', 'expires', 'expiry_date',
-                        'accessed_at', 'deleted_at', 'published_on', 'event_time',
-                        'transaction_time', 'log_time', 'start_date', 'start_time', 'end_date', 
-                        'end_time', 'recorded_at', 'received_at', 'sent_at'])
+#     datetime_keywords = set(['rx.ts', 'info.datecreated', 'date', 'time',
+#                         'iothubenqueuedtime' 'timestamp', 'utc', 'published',
+#                         'publishedat','payload.publishedat', 'datecreated',
+#                         'payload.timestamp', 'noted_date', 'created_at',
+#                         'updated_at', 'modified', 'expires', 'expiry_date',
+#                         'accessed_at', 'deleted_at', 'published_on', 'event_time',
+#                         'transaction_time', 'log_time', 'start_date', 'start_time', 'end_date', 
+#                         'end_time', 'recorded_at', 'received_at', 'sent_at'])
   
-    df.columns = clean_column_names(df.columns)
-    datetime_cols = identify_datetime_cols(df, datetime_keywords)
-    df = convert_to_datetime(df, datetime_cols)
+#     df.columns = clean_column_names(df.columns)
+#     datetime_cols = identify_datetime_cols(df, datetime_keywords)
+#     df = convert_to_datetime(df, datetime_cols)
 
-    main_datetime_col = datetime_cols[0] if datetime_cols else None
-    if main_datetime_col:
-        df = create_features(df, main_datetime_col)
+#     main_datetime_col = datetime_cols[0] if datetime_cols else None
+#     if main_datetime_col:
+#         df = create_features(df, main_datetime_col)
 
-    lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list = [], [], [], [], []
-    return df, lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list, main_datetime_col
+#     lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list = [], [], [], [], []
+#     return df, lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list, main_datetime_col
 
-def convert_to_datetime(df, datetime_cols):
-    """
-    Converts identified columns to datetime format.
-    """
-    for col in datetime_cols:
-        df[col] = pd.to_datetime(df[col], errors='coerce')
-        df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S') if not df[col].isnull().all() else df[col]
-    return df
+# def convert_to_datetime(df, datetime_cols):
+#     """
+#     Converts identified columns to datetime format.
+#     """
+#     for col in datetime_cols:
+#         df[col] = pd.to_datetime(df[col], errors='coerce')
+#         df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S') if not df[col].isnull().all() else df[col]
+#     return df
 
-def create_features(df, date_col):
-    """
-    Creates additional time-based features from the specified datetime column.
-    """
-    df['season'] = df[date_col].dt.month % 12 // 3 + 1
-    df['time_of_day'] = pd.cut(df[date_col].dt.hour, bins=[0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
-    df['day_of_week'] = df[date_col].dt.day_name().str.lower()
-    df['month'] = df[date_col].dt.month_name().str.lower()
-    df['hour'] = df[date_col].dt.hour
-    return df
+# def create_features(df, date_col):
+#     """
+#     Creates additional time-based features from the specified datetime column.
+#     """
+#     df['season'] = df[date_col].dt.month % 12 // 3 + 1
+#     df['time_of_day'] = pd.cut(df[date_col].dt.hour, bins=[0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
+#     df['day_of_week'] = df[date_col].dt.day_name().str.lower()
+#     df['month'] = df[date_col].dt.month_name().str.lower()
+#     df['hour'] = df[date_col].dt.hour
+#     return df
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
