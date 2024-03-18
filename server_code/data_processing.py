@@ -37,6 +37,7 @@ def convert_to_datetime(df, datetime_cols):
     return df
 
 def create_features(df, date_col):
+    convert_to_datetime(df, datetime_cols)
     """Generate time-based features from the datetime column."""
     df['season'] = df[date_col].dt.month % 12 // 3 + 1
     df['time_of_day'] = pd.cut(df[date_col].dt.hour, [0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
@@ -63,6 +64,7 @@ def process_datafile(df):
 
     # Identify and convert datetime columns
     datetime_cols = identify_datetime_cols(df, datetime_keywords)
+  
     df = convert_to_datetime(df, datetime_cols)
 
     # Assume the first datetime column is the main datetime column

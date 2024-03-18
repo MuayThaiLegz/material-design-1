@@ -72,14 +72,6 @@ class home(homeTemplate):
         else:
             self.display_feedback(False, "Failed to fetch datasets.")
 
-    def on_file_loader_changed(self, **event_args):
-        self.process_file_button.enabled = bool(self.file_loader.file)
-
-    def on_process_file_clicked(self, **event_args):
-        if self.file_loader.file:
-            success, message = anvil.server.call('store_data', self.file_loader.file, self.ip_address_box.text)
-            self.display_feedback(success, message)
-
     def display_feedback(self, success, message):
         self.feedback_label.text = message
         self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
@@ -89,5 +81,16 @@ class home(homeTemplate):
         selected_dataset = sender.selected_value
         if selected_dataset:
             # Placeholder for dataset selection actions
+            self.vertical = selected_dataset
             print(f"Dataset selected: {selected_dataset}")
 
+
+    def on_file_loader_changed(self, **event_args):
+        self.process_file_button.enabled = bool(self.file_loader.file)
+
+    def on_process_file_clicked(self, **event_args):
+        if self.file_loader.file:
+            success, message = anvil.server.call('store_data', self.vertical, self.file_loader.file.name, self.file_loader.file, self.ip_address_box.text)
+            self.display_feedback(success, message)
+
+    
