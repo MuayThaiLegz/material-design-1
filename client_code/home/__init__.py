@@ -11,4 +11,6 @@ class home(homeTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
 
+    self.initialize_ui_components()
+
     # Any code you write here will run before the form opens.

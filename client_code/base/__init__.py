@@ -9,6 +9,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..home import home
 from ..signup import signup
+from anvil.users import login_with_form, logout, get_user
 
 
 class base(baseTemplate):
@@ -26,12 +27,15 @@ class base(baseTemplate):
   def button_login_click(self, **event_args):
     email = self.useremail.text
     password = self.password.text
-    message = anvil.server.call('login', email, password)
-    alert(message)
-    if message == "Login successful.":
+    # message = anvil.server.call('login', email, password)
+    if get_user() is None:
+      login_with_form()
+      self.content_panel.add_component(home())
+    # alert(message)
+    # if message == "Login successful.":
         # Optionally, redirect to another form upon successful login
         # self.content_panel.clear()
-        self.content_panel.add_component(home())
+        
 
   def websitelink_click(self, **event_args):
     """This method is called when the link is clicked"""
