@@ -11,6 +11,13 @@ class signup(signupTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
     
+    fp = FlowPanel(align='center', spacing='small')
+    # A button determines its own width
+    fp.add_component(Button(text="Click me"))
+
+    # You set the width of a TextBox explicitly
+    fp.add_component(TextBox(), width=100)
+    
   def button_signup_click(self, **event_args):
     email = self.signupemail.text
     password = self.signuppassword.text

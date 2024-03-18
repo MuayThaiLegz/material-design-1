@@ -87,4 +87,3 @@ def update_login_failure(email, conn):
     cursor.execute('UPDATE users SET n_password_failures = n_password_failures + 1 WHERE email = ?', (email,))
     conn.commit()
 
-# anvil.server.wait_forever()

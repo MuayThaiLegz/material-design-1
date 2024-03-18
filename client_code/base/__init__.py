@@ -9,7 +9,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..home import home
 from ..signup import signup
-import anvil.js
+
 
 class base(baseTemplate):
   def __init__(self, **properties):
@@ -28,7 +28,7 @@ class base(baseTemplate):
     password = self.password.text
     message = anvil.server.call('login', email, password)
     alert(message)
-    if message == "Login successful!":
+    if message == "Login successful.":
         # Optionally, redirect to another form upon successful login
         # self.content_panel.clear()
         self.content_panel.add_component(home())

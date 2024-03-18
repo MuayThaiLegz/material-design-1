@@ -5,17 +5,18 @@ components:
 - name: column_panel_signup
   properties: {background: '', foreground: ''}
   type: ColumnPanel
-  layout_properties: {grid_position: 'WBZURF,VZKSDM'}
+  layout_properties: {grid_position: 'WBZURF,VZKSDM', full_width_row: false}
   components:
   - name: signupemail
-    properties: {placeholder: Enter Email, foreground: '', font_size: 20, align: center,
-      bold: true, italic: false, background: 'theme:White', enabled: true}
+    properties: {align: center, placeholder: Enter Email, enabled: true, foreground: '',
+      font_size: 20, italic: false, background: 'theme:White', bold: false, underline: true}
     type: TextBox
-    layout_properties: {grid_position: 'UGFSUF,XEZXDB', row_background: '', full_width_row: false}
+    layout_properties: {grid_position: 'TUAPSB,EJBDZB'}
     event_bindings: {}
+    data_bindings: []
   - name: signuppassword
-    properties: {placeholder: Enter Password, align: center, bold: true, font_size: 20,
-      spacing_above: none, background: 'theme:White'}
+    properties: {placeholder: Enter Password, align: center, bold: false, font_size: 20,
+      spacing_above: none, background: 'theme:White', underline: true}
     type: TextBox
     layout_properties: {grid_position: 'WOJCWB,NHYEGZ'}
   - name: signupconfirm
@@ -29,8 +30,4 @@ components:
     data_bindings:
     - {property: icon_align, code: 'self.item['''']', writeback: false}
     event_bindings: {click: button_signup_click}
-- name: signupimage
-  properties: {height: 679, source: _/theme/neom_future_of_civilization.jpg, display_mode: fill_width}
-  type: Image
-  layout_properties: {grid_position: 'GFFGBJ,GTDVZV'}
 is_package: true
