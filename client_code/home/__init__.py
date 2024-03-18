@@ -13,7 +13,7 @@ class home(homeTemplate):
     self.initialize_ui_components
 
   def initialize_ui_components(self):
-        """Initialize UI components after user authentication."""
+        """Initialize UI components after user authent                                                                              ication."""
         self.setup_sidebar()
         self.setup_feedback_label()
 

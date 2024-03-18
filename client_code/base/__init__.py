@@ -30,7 +30,9 @@ class base(baseTemplate):
     # message = anvil.server.call('login', email, password)
     if get_user() is None:
       login_with_form()
-      self.content_panel.add_component(home())
+
+    self.content_panel.clear()
+    self.content_panel.add_component(home())
     # alert(message)
     # if message == "Login successful.":
         # Optionally, redirect to another form upon successful login
