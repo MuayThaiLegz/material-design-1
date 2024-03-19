@@ -104,6 +104,29 @@ def get_database_names(connString):
         return True, db_names
     except Exception as e:
         return False, str(e)
+
+@anvil.server.callable
+def get_collection_names(conn_string, db_name):
+    try:
+        client = MongoClient(conn_string)
+        db = client[db_name]
+        collection_names = db.list_collection_names()
+        client.close()
+        return collection_names
+    except Exception as e:
+        return ["Error: " + str(e)]
+
+@anvil.server.callable
+def fetch_collection_data(conn_string, db_name, collection_name):
+    try:
+        client = MongoClient(conn_string)
+        db = client[db_name]
+        collection = db[collection_name]
+        data = list(collection.find({}, {'_id': False}))  # Assuming you don't want to send MongoDB's _id field to the client
+        client.close()
+        return data
+    except Exception as e:
+        return [{"Error": str(e)}]
       
 # @anvil.server.callable
 # def store_data(db_name, collection_name, file, connString):
