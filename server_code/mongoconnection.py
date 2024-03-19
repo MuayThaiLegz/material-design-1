@@ -88,12 +88,23 @@ def store_data(db_name, collection_name, file, connString):
     # If there's data processing needed, call process_datafile here and ensure it's implemented
     
     # Directly converting df to records and inserting into MongoDB
+    # df, lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list, main_datetime_col = process_datafile(df)
     records = df.to_dict('records')
     collection.insert_many(records)
     client.close()
     return True, f"Data saved successfully in {sanitized_db_name}/{sanitized_collection_name}."
 
-
+@anvil.server.callable
+def get_database_names(connString):
+    try:
+        # Create a MongoDB client
+        client = MongoClient(connString)
+        # List database names
+        db_names = client.list_database_names()
+        return True, db_names
+    except Exception as e:
+        return False, str(e)
+      
 # @anvil.server.callable
 # def store_data(db_name, collection_name, file, connString):
 #     print('Entering')

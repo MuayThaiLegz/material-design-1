@@ -74,6 +74,7 @@ def login(email, password):
             update_login_failure(email, conn)
             return "Login failed. Please check your email and password."
 
+
 def username_exists(email, cursor):
     cursor.execute('SELECT id FROM users WHERE email = ?', (email,))
     return cursor.fetchone() is not None

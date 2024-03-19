@@ -29,22 +29,44 @@ def identify_datetime_cols(df, datetime_keywords):
     datetime_cols = [col for col in df.columns if any(keyword in col for keyword in datetime_keywords) or df[col].dtype == 'object']
     return datetime_cols
 
+# def convert_to_datetime(df, datetime_cols):
+#     """Convert identified columns to datetime format."""
+#     for col in datetime_cols:
+#         df[col] = pd.to_datetime(df[col], errors='coerce')
+#         df[col] = df[col].dt.strftime('%Y-%m-%d-%H:%M:%S') if not df[col].isnull().all() else df[col]
+#     return df
+
 def convert_to_datetime(df, datetime_cols):
     """Convert identified columns to datetime format."""
     for col in datetime_cols:
-        df[col] = pd.to_datetime(df[col], errors='coerce')
-        df[col] = df[col].dt.strftime('%Y-%m-%d-%H:%M:%S') if not df[col].isnull().all() else df[col]
+        try:
+            df[col] = pd.to_datetime(df[col], errors='coerce')
+            df[col] = df[col].dt.strftime('%Y-%m-%d-%H:%M:%S') if not df[col].isnull().all() else df[col]
+        except KeyError:
+            print(f"Column {col} does not exist in DataFrame.")
     return df
 
+
 def create_features(df, date_col):
-    convert_to_datetime(df, datetime_cols)
     """Generate time-based features from the datetime column."""
-    df['season'] = df[date_col].dt.month % 12 // 3 + 1
-    df['time_of_day'] = pd.cut(df[date_col].dt.hour, [0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
-    df['day_of_week'] = df[date_col].dt.day_name().str.lower()
-    df['month'] = df[date_col].dt.month_name().str.lower()
-    df['hour'] = df[date_col].dt.hour
+    if date_col in df.columns:
+        df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+        df['season'] = df[date_col].dt.month % 12 // 3 + 1
+        df['time_of_day'] = pd.cut(df[date_col].dt.hour, [0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
+        df['day_of_week'] = df[date_col].dt.day_name().str.lower()
+        df['month'] = df[date_col].dt.month_name().str.lower()
+        df['hour'] = df[date_col].dt.hour
     return df
+  
+# def create_features(df, date_col):
+#     convert_to_datetime(df, date_col)
+#     """Generate time-based features from the datetime column."""
+#     df['season'] = df[date_col].dt.month % 12 // 3 + 1
+#     df['time_of_day'] = pd.cut(df[date_col].dt.hour, [0, 6, 12, 18, 24], labels=['Night', 'Morning', 'Afternoon', 'Evening'], right=False)
+#     df['day_of_week'] = df[date_col].dt.day_name().str.lower()
+#     df['month'] = df[date_col].dt.month_name().str.lower()
+#     df['hour'] = df[date_col].dt.hour
+#     return df
 
 
 def process_datafile(df):
@@ -66,9 +88,12 @@ def process_datafile(df):
     datetime_cols = identify_datetime_cols(df, datetime_keywords)
   
     df = convert_to_datetime(df, datetime_cols)
+  
 
     # Assume the first datetime column is the main datetime column
-    main_datetime_col = datetime_cols[0] if datetime_cols else None
+    main_datetime_col = datetime_cols[0] if datetime_cols and datetime_cols[0] in df.columns else None
+
+    # main_datetime_col = datetime_cols[0] if datetime_cols else None
 
     # Drop unwanted columns
     columns_to_drop = ['_id', 'index', 'Unnamed: 0', 'level_0']
