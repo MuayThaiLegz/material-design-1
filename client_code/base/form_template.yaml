@@ -66,6 +66,7 @@ components:
     properties: {}
     type: LinearPanel
     layout_properties: {grid_position: 'AHQJDG,UAKVSO'}
+  event_bindings: {hide: basesidebar_hide}
 - name: content_panel
   properties: {}
   type: ColumnPanel

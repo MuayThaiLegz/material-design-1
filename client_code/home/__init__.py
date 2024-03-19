@@ -17,6 +17,8 @@ class home(homeTemplate):
 
     def setup_sidebar(self):
         self.sidebar = ColumnPanel(background="#2E2E2E")
+        # self.sidebar = ColumnPanel(background="#2E2E2E", width="100%")
+
         self.add_component(self.sidebar, slot="sidebar")
         self.setup_connection_controls()
         self.setup_action_controls()
@@ -52,6 +54,7 @@ class home(homeTemplate):
         self.process_file_button.set_event_handler('click', self.on_process_file_clicked)
         self.file_loader.set_event_handler('change', self.on_file_loader_changed)
 
+  
     def setup_feedback_label(self):
         self.feedback_label = Label(text="", foreground="#F44336")
         self.sidebar.add_component(self.feedback_label)
@@ -83,8 +86,6 @@ class home(homeTemplate):
             # Placeholder for dataset selection actions
             self.vertical = selected_dataset
             print(f"Dataset selected: {selected_dataset}")
-
-
     def on_file_loader_changed(self, **event_args):
         self.process_file_button.enabled = bool(self.file_loader.file)
 

@@ -21,6 +21,7 @@ class base(baseTemplate):
     """This method is called when the link is clicked"""
     # Brings up sign up page
     self.content_panel.clear()
+    self.basesidebar.visible = False
     self.content_panel.add_component(signup())
 
         
@@ -32,6 +33,7 @@ class base(baseTemplate):
       login_with_form()
 
     self.content_panel.clear()
+    self.basesidebar.visible = False
     self.content_panel.add_component(home())
     # alert(message)
     # if message == "Login successful.":
@@ -42,3 +44,4 @@ class base(baseTemplate):
   def websitelink_click(self, **event_args):
     """This method is called when the link is clicked"""
     anvil.js.window.location.href = "https://connectivialabs.com/"
+
