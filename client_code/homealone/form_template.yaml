@@ -11,7 +11,7 @@ components:
   properties: {}
   name: navbar_links
   layout_properties: {slot: nav-right}
-- name: flow_panel_1
+- name: column_panel_1
   properties: {}
-  type: FlowPanel
+  type: ColumnPanel
   layout_properties: {slot: left-nav}
