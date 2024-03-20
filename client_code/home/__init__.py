@@ -186,12 +186,13 @@ class home(homeTemplate):
         self.process_file_button.enabled = bool(self.file_loader.file)
 
     def on_process_file_clicked(self, **event_args):
-        if self.file_loader.file:
-            success, message = anvil.server.call('store_data', self.selected_dataset, self.file_loader.file.name, self.file_loader.file, self.ip_address_box.text)
-            self.display_feedback(success, message)
+      if self.file_loader.file:
+        success, message = anvil.server.call('store_data', self.selected_dataset, self.file_loader.file.name, self.file_loader.file, self.ip_address_box.text)
+        alert(message)
+        self.display_feedback(success, message)
 
     def display_feedback(self, success, message):
-        # Display feedback message to the user
-        self.feedback_label.text = message
-        self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
+      # Display feedback message to the user
+      self.feedback_label.text = message
+      self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
       

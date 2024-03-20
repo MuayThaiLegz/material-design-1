@@ -89,6 +89,7 @@ def store_data(db_name, collection_name, file, connString):
     
     # Directly converting df to records and inserting into MongoDB
     # df, lat_long_list, numerical_data, numerical_options_list, object_data, object_options_list, main_datetime_col = process_datafile(df)
+  
     records = df.to_dict('records')
     collection.insert_many(records)
     client.close()
