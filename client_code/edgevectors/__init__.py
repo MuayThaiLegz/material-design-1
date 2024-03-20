@@ -10,9 +10,6 @@ class edgevectors(edgevectorsTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-    self.feedback_label.text = 'edgevectors'
-    self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
-    self.feedback_label.visible = True
-
-
+    self.content_panel.add_component(Label(text='edgevectors', italic=True))
+    
     # Any code you write here will run before the form opens.

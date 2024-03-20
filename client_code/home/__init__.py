@@ -32,7 +32,7 @@ class home(homeTemplate):
     def setup_ui_elements(self):
         """Initializes UI elements including the title, navigation bar, and content panel."""
         # Title setup
-        self.title = Label(text="Data Processing Portal", font_size=24, bold=True, align="center")
+        self.title = Label(text="Cognitivie Portal", font_size=24, bold=True, align="center")
         
         # Navigation bar setup
         self.nav_bar = FlowPanel(align="center")
@@ -48,6 +48,8 @@ class home(homeTemplate):
         
         # Feedback label setup
         self.setup_feedback_label()
+        self.setup_dataset_controls()
+        self.setup_file_controls()
 
     def add_nav_links(self):
         """Adds navigation links to the navigation bar with event handlers."""
@@ -68,17 +70,69 @@ class home(homeTemplate):
         self.feedback_label = Label(text="", font_size=16, bold=True, width='100%', align='center', visible=False)
         self.content_panel.add_component(self.feedback_label, width='100%')
 
+    def setup_file_controls(self):
+        """Sets up UI components for file uploading and processing."""
+        self.file_loader = FileLoader(multiple=False, file_types=[".csv", ".xlsx", ".json", ".parquet"], 
+                                      tooltip="Upload your data file here", width="fill")
+        self.file_loader.set_event_handler('change', self.on_file_loader_changed)
+        self.content_panel.add_component(self.file_loader)
+        
+        self.process_file_button = Button(text="Process File", icon="fa:cogs", role="secondary-color", 
+                                          enabled=False, width=120)
+        self.process_file_button.set_event_handler('click', self.on_process_file_clicked)
+        self.content_panel.add_component(self.process_file_button, width='fill')
+
+    def on_file_loader_changed(self, **event_args):
+        """Enables the process file button when a file is selected."""
+        self.process_file_button.enabled = bool(self.file_loader.file)
+
+    def on_process_file_clicked(self, **event_args):
+        """Processes the selected file against the selected dataset."""
+        if self.file_loader.file:
+            self.collection_name = self.file_loader.file.name
+            success, message = anvil.server.call('store_data', self.selected_dataset, 
+                                                 self.file_loader.file.name, self.file_loader.file, self.mongoConnect)
+            self.display_feedback(success, message)
+
     def fetch_datasets(self):
         """Fetches dataset names from the server using the MongoDB connection string."""
         success, db_names_or_error = anvil.server.call('get_database_names', self.mongoConnect)
+      
         if success:
             self.update_dataset_radios(db_names_or_error)
         else:
             self.display_feedback(False, db_names_or_error)
 
+    def setup_dataset_controls(self):
+        """Sets up UI components for dataset selection."""
+        # label = Label(text="Select a Dataset:", italic=True, background='#023645')
+        self.dataset_radio_panel = FlowPanel(width='fill')
+        
+        # self.content_panel.add_component(label)
+        self.content_panel.add_component(self.dataset_radio_panel)
+
     def update_dataset_radios(self, db_names):
-        """Updates the dataset selection options based on available datasets."""
-        # Example placeholder for dataset selection logic
+        """Updates the dataset selection radio buttons based on available datasets."""
+        self.dataset_radio_panel.clear()
+        for db_name in db_names:
+            radio = RadioButton(text=db_name, group_name="datasets")
+            radio.set_event_handler('change', self.on_dataset_selected)
+            self.dataset_radio_panel.add_component(radio)
+
+    def on_dataset_selected(self, sender, **event_args):
+        """Handles dataset selection, enabling file processing based on selection."""
+        if sender.selected:
+            self.selected_dataset = sender.text
+            self.display_feedback(True, f"Selected dataset: {self.selected_dataset}")
+            data = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, self.collection_name)
+            alert(data)
+          
+          
+
+# def fetch_collection_data(conn_string, db_name, collection_name):
+    # def update_dataset_radios(self, db_names):
+    #     """Updates the dataset selection options based on available datasets."""
+    #     # Example placeholder for dataset selection logic
 
     def display_feedback(self, success, message):
         """Displays a feedback message to the user."""
@@ -88,19 +142,19 @@ class home(homeTemplate):
 
     # Navigation methods
     def open_analytics(self, **event_args):
-        self.content_panel.clear()
+        # self.content_panel.clear()
         self.content_panel.add_component(analytics())
 
     def open_anomaly_detection(self, **event_args):
-        self.content_panel.clear()
+        # self.content_panel.clear()
         self.content_panel.add_component(anomalydetection())
 
     def open_edge_vectors(self, **event_args):
-        self.content_panel.clear()
+        # self.content_panel.clear()
         self.content_panel.add_component(edgevectors())
 
     def open_multi_sense(self, **event_args):
-        self.content_panel.clear()
+        # self.content_panel.clear()
         self.content_panel.add_component(multisense())
       
 
