@@ -126,7 +126,7 @@ def fetch_collection_data(conn_string, db_name, collection_name):
         client = MongoClient(conn_string)
         db = client[db_name]
         collection = db[collection_name]
-        data = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
+        df = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
         data = df.to_dict('records')
         columns = df.columns.tolist()    
         client.close()
