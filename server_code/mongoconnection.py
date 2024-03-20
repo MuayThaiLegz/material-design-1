@@ -110,7 +110,7 @@ def get_database_names(connString):
         return False, str(e)
 
 @anvil.server.callable
-def get_collection_names(conn_string, db_name):
+def list_collections(conn_string, db_name):
     try:
         client = MongoClient(conn_string)
         db = client[db_name]
