@@ -21,76 +21,73 @@ class home(homeTemplate):
     def __init__(self, mongoConnect, **properties):
         self.init_components(**properties)
         self.mongoConnect = mongoConnect
-        # Define the data_grid_placeholder here to be used later
-        self.content_panel = ColumnPanel()
-        self.data_grid_placeholder = FlowPanel()
-        self.content_panel.add_component(self.data_grid_placeholder)
+
+        # Setting up UI components
         self.setup_ui_elements()
+
+        # Fetch datasets initially
         self.fetch_datasets()
 
     def setup_ui_elements(self):
+        # Adding navigation links
         self.add_nav_links()
+        
+        # Setup feedback label for user messages
         self.setup_feedback_label()
+
+        # Setup dataset and file upload controls
         self.setup_dataset_controls()
-        self.setup_collection_dropdown()
         self.setup_file_controls()
 
+        # Placeholder for data grid
+        self.data_grid_placeholder = FlowPanel()
+        self.content_panel.add_component(self.data_grid_placeholder)
+
     def add_nav_links(self):
-        features = [
-            ("Analytics", analytics),
-            ("Anomaly Detection", anomalydetection),
-            ("Edge Vectors", edgevectors),
-            ("Multi Sense", multisense)
-        ]
-        for text, form in features:
+        features = {
+            "Analytics": analytics,
+            "Anomaly Detection": anomalydetection,
+            "Edge Vectors": edgevectors,
+            "Multi Sense": multisense
+        }
+        for text, form in features.items():
             link = Link(text=text, align="center")
             link.tag = form
-            link.set_event_handler('click', lambda **e: self.open_feature_form(e['sender'].tag))
+            link.set_event_handler('click', lambda sender, **event_args: self.open_feature_form(sender.tag))
 
     def setup_feedback_label(self):
-        self.feedback_label = Label(text="", font_size=16, bold=True, width='100%', align='center', visible=False)
-        self.content_panel.add_component(self.feedback_label, width='100%')
+        self.feedback_label = Label(text="", font_size=16, bold=True, align='center', visible=True)
+        self.content_panel.add_component(self.feedback_label)
 
     def setup_dataset_controls(self):
         self.dataset_radio_panel = FlowPanel(width='fill')
         self.content_panel.add_component(self.dataset_radio_panel)
 
-    def setup_collection_dropdown(self):
-        self.collection_dropdown = DropDown()
-        self.content_panel.add_component(self.collection_dropdown)
-        self.collection_dropdown.set_event_handler('change', self.on_collection_selected)
-    def on_file_loader_changed(self, **event_args):
-      """Enables the process file button when a file is selected."""
-      self.process_file_button.enabled = bool(self.file_loader.file)
-      
     def setup_file_controls(self):
-        self.file_loader = FileLoader(multiple=False, file_types=[".csv", ".xlsx", ".json", ".parquet"], 
-                                      tooltip="Upload your data file here", width="fill")
+        self.file_loader = FileLoader(multiple=False, file_types=[".csv", ".xlsx", ".json", ".parquet"], tooltip="Upload your data file here")
         self.file_loader.set_event_handler('change', self.on_file_loader_changed)
         self.content_panel.add_component(self.file_loader)
-        
-        self.process_file_button = Button(text="Process File", icon="fa:cogs", role="secondary-color", 
-                                          enabled=False, width=120)
+
+        self.process_file_button = Button(text="Process File", icon="fa:cogs", role="primary-color", enabled=False)
         self.process_file_button.set_event_handler('click', self.on_process_file_clicked)
-        self.content_panel.add_component(self.process_file_button, width='fill')
+        self.content_panel.add_component(self.process_file_button)
+
+    def on_file_loader_changed(self, **event_args):
+        self.process_file_button.enabled = bool(self.file_loader.file)
 
     def on_process_file_clicked(self, **event_args):
-        """Processes the selected file against the selected dataset."""
         if self.file_loader.file:
-            collection_name = self.file_loader.file.name
-            success, message = anvil.server.call('store_data', self.selected_dataset, 
-                                                 self.file_loader.file.name, self.file_loader.file, self.mongoConnect)
+            success, message = anvil.server.call('store_data', self.selected_dataset, self.file_loader.file)
             self.display_feedback(success, message)
 
     def fetch_datasets(self):
-        success, db_names_or_error = anvil.server.call('get_database_names', self.mongoConnect)
+        success, datasets = anvil.server.call_s('get_database_names', self.mongoConnect)
         if success:
-            self.update_dataset_radios(db_names_or_error)
+            self.update_dataset_radios(datasets)
         else:
-            self.display_feedback(False, db_names_or_error)
+            self.display_feedback(False, "Failed to fetch datasets.")
 
     def update_dataset_radios(self, db_names):
-        self.dataset_radio_panel.clear()
         for db_name in db_names:
             radio = RadioButton(text=db_name, group_name="datasets")
             radio.set_event_handler('change', lambda sender, **e: self.on_dataset_selected(sender.text))
@@ -98,27 +95,141 @@ class home(homeTemplate):
 
     def on_dataset_selected(self, dataset_name):
         self.selected_dataset = dataset_name
-        collections = anvil.server.call('list_collections', self.mongoConnect, self.selected_dataset)
-        self.collection_dropdown.items = [(name, name) for name in collections]
-        self.display_feedback(True, f"Dataset selected: {self.selected_dataset}")
+        self.display_feedback(True, f"Dataset selected: {dataset_name}")
+        # Assume fetch_collection_data also initializes the collections dropdown
+        self.init_collections_dropdown(dataset_name)
+
+    def init_collections_dropdown(self, dataset_name):
+        collections = anvil.server.call('list_collections', self.mongoConnect, dataset_name)
+        # Assuming collection_dropdown exists as part of the form, populated here
+        self.collection_dropdown.items = collections
+        self.collection_dropdown.set_event_handler('change', self.on_collection_selected)
 
     def on_collection_selected(self, sender, **event_args):
-        collection_name = sender.selected_value
+        collection_name = self.collection_dropdown.selected_value
         data, columns = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
         if data:
             self.create_and_populate_data_grid(data, columns)
         else:
-            self.display_feedback(False, "No data found for the selected collection.")
+            self.display_feedback(False, "No data found.")
 
     def create_and_populate_data_grid(self, data, columns):
-        data_grid = DataGrid(show_header=True, columns=[DataGridColumn(title=col, data_key=col) for col in columns])
-        data_grid.items = data
         self.data_grid_placeholder.clear()
+        data_grid = DataGrid(show_header=True, columns=[DataGridColumn(title=col, data_key=col, width=200) for col in columns])
+        data_grid.items = data
         self.data_grid_placeholder.add_component(data_grid)
+
+    def display_feedback(self, success, message):
+        self.feedback_label.text = message
+        self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
+        self.feedback_label.visible = True
 
     def open_feature_form(self, form_class):
         self.content_panel.clear()
-        self.content_panel.add_component(form_class())
+        self.content_panel
+      
+# class home(homeTemplate):
+#     def __init__(self, mongoConnect, **properties):
+#         self.init_components(**properties)
+#         self.mongoConnect = mongoConnect
+#         # Define the data_grid_placeholder here to be used later
+#         self.content_panel = ColumnPanel()
+#         self.data_grid_placeholder = FlowPanel()
+#         self.content_panel.add_component(self.data_grid_placeholder)
+#         self.setup_ui_elements()
+#         self.fetch_datasets()
+
+#     def setup_ui_elements(self):
+#         self.add_nav_links()
+#         self.setup_feedback_label()
+#         self.setup_dataset_controls()
+#         self.setup_collection_dropdown()
+#         self.setup_file_controls()
+
+#     def add_nav_links(self):
+#         features = [
+#             ("Analytics", analytics),
+#             ("Anomaly Detection", anomalydetection),
+#             ("Edge Vectors", edgevectors),
+#             ("Multi Sense", multisense)
+#         ]
+#         for text, form in features:
+#             link = Link(text=text, align="center")
+#             link.tag = form
+#             link.set_event_handler('click', lambda **e: self.open_feature_form(e['sender'].tag))
+
+#     def setup_feedback_label(self):
+#         self.feedback_label = Label(text="", font_size=16, bold=True, width='100%', align='center', visible=False)
+#         self.content_panel.add_component(self.feedback_label, width='100%')
+
+#     def setup_dataset_controls(self):
+#         self.dataset_radio_panel = FlowPanel(width='fill')
+#         self.content_panel.add_component(self.dataset_radio_panel)
+
+#     def setup_collection_dropdown(self):
+#         self.collection_dropdown = DropDown()
+#         self.content_panel.add_component(self.collection_dropdown)
+#         self.collection_dropdown.set_event_handler('change', self.on_collection_selected)
+#     def on_file_loader_changed(self, **event_args):
+#       """Enables the process file button when a file is selected."""
+#       self.process_file_button.enabled = bool(self.file_loader.file)
+      
+#     def setup_file_controls(self):
+#         self.file_loader = FileLoader(multiple=False, file_types=[".csv", ".xlsx", ".json", ".parquet"], 
+#                                       tooltip="Upload your data file here", width="fill")
+#         self.file_loader.set_event_handler('change', self.on_file_loader_changed)
+#         self.content_panel.add_component(self.file_loader)
+        
+#         self.process_file_button = Button(text="Process File", icon="fa:cogs", role="secondary-color", 
+#                                           enabled=False, width=120)
+#         self.process_file_button.set_event_handler('click', self.on_process_file_clicked)
+#         self.content_panel.add_component(self.process_file_button, width='fill')
+
+#     def on_process_file_clicked(self, **event_args):
+#         """Processes the selected file against the selected dataset."""
+#         if self.file_loader.file:
+#             collection_name = self.file_loader.file.name
+#             success, message = anvil.server.call('store_data', self.selected_dataset, 
+#                                                  self.file_loader.file.name, self.file_loader.file, self.mongoConnect)
+#             self.display_feedback(success, message)
+
+#     def fetch_datasets(self):
+#         success, db_names_or_error = anvil.server.call('get_database_names', self.mongoConnect)
+#         if success:
+#             self.update_dataset_radios(db_names_or_error)
+#         else:
+#             self.display_feedback(False, db_names_or_error)
+
+#     def update_dataset_radios(self, db_names):
+#         self.dataset_radio_panel.clear()
+#         for db_name in db_names:
+#             radio = RadioButton(text=db_name, group_name="datasets")
+#             radio.set_event_handler('change', lambda sender, **e: self.on_dataset_selected(sender.text))
+#             self.dataset_radio_panel.add_component(radio)
+
+#     def on_dataset_selected(self, dataset_name):
+#         self.selected_dataset = dataset_name
+#         collections = anvil.server.call('list_collections', self.mongoConnect, self.selected_dataset)
+#         self.collection_dropdown.items = [(name, name) for name in collections]
+#         self.display_feedback(True, f"Dataset selected: {self.selected_dataset}")
+
+#     def on_collection_selected(self, sender, **event_args):
+#         collection_name = sender.selected_value
+#         data, columns = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
+#         if data:
+#             self.create_and_populate_data_grid(data, columns)
+#         else:
+#             self.display_feedback(False, "No data found for the selected collection.")
+
+#     def create_and_populate_data_grid(self, data, columns):
+#         data_grid = DataGrid(show_header=True, columns=[DataGridColumn(title=col, data_key=col) for col in columns])
+#         data_grid.items = data
+#         self.data_grid_placeholder.clear()
+#         self.data_grid_placeholder.add_component(data_grid)
+
+#     def open_feature_form(self, form_class):
+#         self.content_panel.clear()
+#         self.content_panel.add_component(form_class())
       
 # class home(homeTemplate):
 #     def __init__(self, mongoConnect, **properties):
