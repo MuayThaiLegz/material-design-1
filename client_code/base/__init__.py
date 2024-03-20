@@ -82,7 +82,7 @@ class base(baseTemplate):
     alert(message)
     if message:
       alert("Signup successful.")
-      open_form(home())
+      open_form(home(mongoConnect))
     else:
         alert("Signup failed.")
           
