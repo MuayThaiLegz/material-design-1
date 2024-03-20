@@ -71,7 +71,12 @@ class home(homeTemplate):
         """Sets up the feedback label for displaying messages to the user."""
         self.feedback_label = Label(text="", font_size=16, bold=True, width='100%', align='center', visible=False)
         self.content_panel.add_component(self.feedback_label, width='100%')
-
+    def setup_collection_dropdown(self):
+      # Assume this dropdown is added via Anvil Editor or dynamically in code
+      self.collection_dropdown = DropDown()
+      self.content_panel.add_component(self.collection_dropdown)
+      self.collection_dropdown.set_event_handler('change', self.on_collection_selected)
+      
     def setup_file_controls(self):
         """Sets up UI components for file uploading and processing."""
         self.file_loader = FileLoader(multiple=False, file_types=[".csv", ".xlsx", ".json", ".parquet"], 
