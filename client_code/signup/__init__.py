@@ -7,12 +7,13 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ..home import home
+# from ..home import home
 # from ..base import base
 
 class signup(signupTemplate):
     def __init__(self, **properties):
-        self.init_components(**properties)
+        super().__init__(**properties)
+        # self.init_components(**properties)
         
         # Layout
         self.layout = ColumnPanel()
@@ -66,7 +67,7 @@ class signup(signupTemplate):
         # success = anvil.server.call('server_signup_function', email, password)
         
     def back_to_home_clicked(self, **event_args):
-        open_form(base())
+        open_form('base')
       
 
 # class signup(signupTemplate):
