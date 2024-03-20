@@ -74,6 +74,14 @@ class home(homeTemplate):
         self.process_file_button.set_event_handler('click', self.on_process_file_clicked)
         self.content_panel.add_component(self.process_file_button, width='fill')
 
+    def on_process_file_clicked(self, **event_args):
+        """Processes the selected file against the selected dataset."""
+        if self.file_loader.file:
+            collection_name = self.file_loader.file.name
+            success, message = anvil.server.call('store_data', self.selected_dataset, 
+                                                 self.file_loader.file.name, self.file_loader.file, self.mongoConnect)
+            self.display_feedback(success, message)
+
     def fetch_datasets(self):
         success, db_names_or_error = anvil.server.call('get_database_names', self.mongoConnect)
         if success:
