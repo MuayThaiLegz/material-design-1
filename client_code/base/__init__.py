@@ -33,27 +33,17 @@ class base(baseTemplate):
     mongoConnect = self.mongoConnect.text
     
     # message = anvil.server.call('login', email, password)
-    user = anvil.users.login_with_form()
-    if user:
-      success, message = anvil.server.call('connect_to_mongodb', mongoConnect)
-      if success:
-          # If MongoDB connection is successful, proceed to the home form.
-          self.content_panel.clear()
-          self.basesidebar.visible = True
-          self.content_panel.add_component(home(mongoConnect=mongoConnect))
-          alert("Login and MongoDB connection successful.")
-      else:
-          # If MongoDB connection fails, show an error message.
-        alert("MongoDB connection failed: " + message)
-    else:
-      alert("Login failed. Please check your credentials.")
+    if get_user() is None:
+      login_with_form()
 
-    # if get_user() is None:
-    #   login_with_form()
-
-    self.content_panel.clear()
-    self.basesidebar.visible = False
-    self.content_panel.add_component(home(mongoConnect))
+    open_form(home(mongoConnect))
+    
+    # self.content_panel.clear()
+    # self.content_panel.add_component(home(mongoConnect))
+    
+    
+    # self.basesidebar.visible = False
+    # self.content_panel.add_component(home())
     # alert(message)
     # if message == "Login successful.":
         # Optionally, redirect to another form upon successful login
@@ -78,11 +68,10 @@ class base(baseTemplate):
     connString = self.mongoConnect.text
     
     success, message = anvil.server.call('connect_to_mongodb', connString)
-    message = anvil.server.call('login', email, password)
     alert(message)
     if message:
       alert("Signup successful.")
-      open_form(home(mongoConnect))
+      open_form(home())
     else:
         alert("Signup failed.")
           
