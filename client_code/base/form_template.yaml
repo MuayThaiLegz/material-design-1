@@ -44,13 +44,18 @@ components:
     type: TextBox
     layout_properties: {grid_position: 'DCJDJN,XXAHNN', row_background: ''}
     event_bindings: {}
+  - name: mongoConnect
+    properties: {placeholder: MongoDB Connection String, background: 'theme:White',
+      align: center, italic: true, bold: true}
+    type: TextBox
+    layout_properties: {grid_position: 'LJZGHN,OQMBWT'}
   - name: spacer_1
     properties: {height: 97}
     type: Spacer
     layout_properties: {grid_position: 'WKXHMO,QRBZPW'}
   - name: button_1
-    properties: {text: Log in, background: 'theme:Primary 700', foreground: 'theme:White',
-      icon: 'fa:external-link-square', font: '20', spacing_below: large}
+    properties: {text: Connect, background: 'theme:Primary 700', foreground: 'theme:White',
+      icon: 'fa:plug', font: '20', spacing_below: large}
     type: Button
     layout_properties: {grid_position: 'RMVCNN,UFSCIA'}
     event_bindings: {click: button_login_click}

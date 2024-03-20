@@ -51,8 +51,8 @@ class signup(signupTemplate):
             return
         else:
           anvil.server.call('create_db')
-
           message = anvil.server.call('sign_up', email, password)
+          
         alert(message)
         if message:
             alert("Signup successful.")
