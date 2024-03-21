@@ -14,6 +14,7 @@ import re
 from functools import lru_cache
 import calendar
 from data_processing import process_datafile, clean_column_names, identify_datetime_cols, convert_to_datetime, create_features
+import pygwalker as pyg
 
 @anvil.server.callable
 def connect_to_mongodb(connString):
@@ -47,12 +48,6 @@ def sanitize_name(name):
     """Sanitize database or collection name."""
     return re.sub(r'[.\s]', '_', name)
 
-
-import pandas as pd
-from io import BytesIO
-import re
-from pymongo import MongoClient
-import anvil.server
 
 @anvil.server.callable
 def store_data(db_name, collection_name, file, connString):
@@ -128,11 +123,15 @@ def fetch_collection_data(conn_string, db_name, collection_name):
         db = client[db_name]
         collection = db[collection_name]
         collectionret = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
+        columns_to_drop = ['_id', 'index', 'Unnamed: 0', 'level_0']
+        collectionret = collectionret.drop(columns=columns_to_drop, errors='ignore')
+        html_content = pyg.to_html(data)
+        # collectionret = process_datafile(collectionret)
         dataasmarkdown = collectionret.head(10).to_markdown()
         df = collectionret.to_dict('records')
         columns = collectionret.columns.tolist()    
         client.close()
-        return df, columns, dataasmarkdown
+        return df, columns, dataasmarkdown, html_content
     except Exception as e:
         print({"Error": str(e)})
         return [{"Error": str(e)}]

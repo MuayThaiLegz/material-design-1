@@ -85,11 +85,14 @@ def process_datafile(df):
   
     # Clean column names
     df.columns = clean_column_names(df.columns)
+    print('clean_column_names')
 
     # Identify and convert datetime columns
     datetime_cols = identify_datetime_cols(df, datetime_keywords)
+    print('identify_datetime_cols')
   
     df = convert_to_datetime(df, datetime_cols)
+    print('convert_to_datetime')
   
 
     # Assume the first datetime column is the main datetime column

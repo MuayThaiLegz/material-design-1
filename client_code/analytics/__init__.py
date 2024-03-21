@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 
 
 class analytics(analyticsTemplate):
-    def __init__(self, **properties):
+    def __init__(self, df, html_content, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
         self.content_panel = ColumnPanel()

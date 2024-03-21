@@ -31,17 +31,18 @@ class home(homeTemplate):
     def setup_ui(self):
         self.content_panel = ColumnPanel()
         self.data_grid_placeholder = FlowPanel()
-        self.rich_text_data = RichText(role="horizontal_scroll")
-        self.content_panel.add_component(self.rich_text_data)
-        self.add_component(self.content_panel)
-        self.content_panel.add_component(self.data_grid_placeholder)
-        
         self.setup_feedback_label()
         self.setup_nav_links()
         self.setup_dataset_controls()
         self.setup_collection_dropdown()
         self.setup_file_controls()
 
+        self.rich_text_data = RichText(role="horizontal_scroll")
+        self.content_panel.add_component(self.rich_text_data)
+        self.add_component(self.content_panel)
+        self.content_panel.add_component(self.data_grid_placeholder)
+        
+        
     def setup_feedback_label(self):
         self.feedback_label = Label(text="", font_size=16, bold=True, align='center', visible=False)
         self.content_panel.add_component(self.feedback_label)
@@ -64,7 +65,7 @@ class home(homeTemplate):
       # Retrieve the form to open from the tag property of the sender.
       form = sender.tag.form_to_open
       self.content_panel.clear()
-      self.content_panel.add_component(form())
+      self.content_panel.add_component(form(self.data_selection, self.html_content))
 
       
     def setup_dataset_controls(self):
@@ -116,57 +117,57 @@ class home(homeTemplate):
   
     def on_collection_selected(self, sender, **event_args):
       collection_name = sender.selected_value
-      df, columns, dataasmarkdown = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
+      data, columns, dataasmarkdown,html_content = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
       # dataasmarkdown = dataasmarkdown.style.set_properties(**{'background-color': 'yellow'}).render()
 
-      if df:
-          try:
-            self.display_data_as_markdown(dataasmarkdown)
+      if data:
+          self.html_content = html_content
+          self.data_selection = data
+          # try:
+          self.display_data_as_markdown(dataasmarkdown)
             
-          except anvil.server.RuntimeUnavailableError as e:
-            data_as_string = self.media_to_string(data_media)
-            self.display_data_as_markdown(data_as_string)
+          # except anvil.server.RuntimeUnavailableError as e:
+            # data_as_string = self.media_to_string(data_media)
+            # self.display_data_as_markdown(data_as_string)
             
       else:
           self.display_feedback(False, "No data found for the selected collection.")
     
-    def media_to_string(self, media):
-      """Convert a Media object to a string."""
-      with anvil.media.TempFile(media) as filename:
-          with open(filename, "r") as file:
-              content = file.read()
-      return content
     
     def display_data_as_markdown(self, dataasmarkdown):
       # Display the markdown representation of the DataFrame in the RichText component
       self.rich_text_data.content = dataasmarkdown
       self.data_grid_placeholder.visible = False  # Hide the data grid placeholder if it's not used
 
-
-  
-    def populate_data_simulated_grid(self, data, columns):
-      print(data)
-      self.data_grid_placeholder.clear()  # Clear previous content
-      for row_data in data:
-          row_panel = FlowPanel()  # This will represent a row
-          for column_name in columns:
-              cell_label = Label(text=str(row_data[column_name]), width=200)  # Create a label for each cell
-              row_panel.add_component(cell_label)
-          self.data_grid_placeholder.add_component(row_panel)  # Add the row to the placeholder
-
-    def create_and_populate_data_grid(self, data, columns):
-      self.data_grid_placeholder.clear()
-      data_grid = DataGrid(auto_header=True)
-      data_grid.columns = [DataGridColumn(title=col, data_key=col) for col in columns]  # Corrected typo here from data_gird to data_grid and fixed parenthesis
-      data_grid.items = data
-      self.data_grid_placeholder.add_component(data_grid)
-
-
     def display_feedback(self, success, message):
         self.feedback_label.text = message
         self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
         self.feedback_label.visible = True
 
+
+    # def media_to_string(self, media):
+    #   """Convert a Media object to a string."""
+    #   with anvil.media.TempFile(media) as filename:
+    #       with open(filename, "r") as file:
+    #           content = file.read()
+    #   return content
+  
+    # def populate_data_simulated_grid(self, data, columns):
+    #   print(data)
+    #   self.data_grid_placeholder.clear()  # Clear previous content
+    #   for row_data in data:
+    #       row_panel = FlowPanel()  # This will represent a row
+    #       for column_name in columns:
+    #           cell_label = Label(text=str(row_data[column_name]), width=200)  # Create a label for each cell
+    #           row_panel.add_component(cell_label)
+    #       self.data_grid_placeholder.add_component(row_panel)  # Add the row to the placeholder
+
+    # def create_and_populate_data_grid(self, data, columns):
+    #   self.data_grid_placeholder.clear()
+    #   data_grid = DataGrid(auto_header=True)
+    #   data_grid.columns = [DataGridColumn(title=col, data_key=col) for col in columns]  # Corrected typo here from data_gird to data_grid and fixed parenthesis
+    #   data_grid.items = data
+    #   self.data_grid_placeholder.add_component(data_grid)
 
 
     
