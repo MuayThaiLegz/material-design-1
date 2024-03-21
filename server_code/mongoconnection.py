@@ -128,7 +128,7 @@ def fetch_collection_data(conn_string, db_name, collection_name):
         db = client[db_name]
         collection = db[collection_name]
         collectionret = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
-        dataasmarkdown = collectionret.head(25).to_markdown()
+        dataasmarkdown = collectionret.head(10).to_markdown()
         df = collectionret.to_dict('records')
         columns = collectionret.columns.tolist()    
         client.close()
