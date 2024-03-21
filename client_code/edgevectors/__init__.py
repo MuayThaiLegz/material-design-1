@@ -8,8 +8,15 @@ from anvil.tables import app_tables
 
 class edgevectors(edgevectorsTemplate):
   def __init__(self, **properties):
-    # Set Form properties and Data Bindings.
-    self.init_components(**properties)
-    self.content_panel.add_component(Label(text='edgevectors', italic=True))
+      # Set Form properties and Data Bindings.
+      self.init_components(**properties)
+      # self.content_panel = ColumnPanel()
+      self.content_panel.add_component(Label(text="Edge Vectors", italic=True))
+      
+      self.back_button = Button(text="Back to Home")
+      self.back_button.set_event_handler('click', self.back_to_home_clicked)
+      self.add_component(self.back_button)  
+        
+  def back_to_home_clicked(self, **event_args):
+      open_form('base')  
     
-    # Any code you write here will run before the form opens.

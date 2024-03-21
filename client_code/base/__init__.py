@@ -17,8 +17,19 @@ class base(baseTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
     # self.setup_connection_controls()
+        
+  def button_login_click(self, **event_args):
+    email = self.useremail.text
+    password = self.password.text
+    mongoConnect = self.mongoConnect.text
+    # self.connectingstring = mongoConnect
+    
+    # message = anvil.server.call('login', email, password)
+    if get_user() is None:
+      login_with_form()
 
- 
+    open_form(home(mongoConnect))
+   
   def link_signup_click(self, **event_args):
     """This method is called when the link is clicked"""
     # Brings up sign up page
@@ -26,56 +37,24 @@ class base(baseTemplate):
     self.basesidebar.visible = False
     self.content_panel.add_component(signup())
 
-        
-  def button_login_click(self, **event_args):
-    email = self.useremail.text
-    password = self.password.text
-    mongoConnect = self.mongoConnect.text
-    
-    # message = anvil.server.call('login', email, password)
-    if get_user() is None:
-      login_with_form()
-
-    open_form(home(mongoConnect))
-    
-    # self.content_panel.clear()
-    # self.content_panel.add_component(home(mongoConnect))
-    
-    
-    # self.basesidebar.visible = False
-    # self.content_panel.add_component(home())
-    # alert(message)
-    # if message == "Login successful.":
-        # Optionally, redirect to another form upon successful login
-        # self.content_panel.clear()
-  
-  # def setup_connection_controls(self):
-  #   self.content_panel.add_component(Label(text="MongoDB Connection String:", italic=True))
-  #   self.ip_address_box = TextBox(placeholder="mongodb://localhost:27017", width="fill")
-  #   self.content_panel.add_component(self.ip_address_box)
-    
-  #   self.connect_button = Button(text="Connect", icon="fa:plug", role="primary-color", width=120)
-    
-  #   self.connect_button.set_event_handler('click', self.on_connect_clicked)
-    
-  #   self.content_panel.add_component(self.connect_button, width='fill')
-
   
   def on_connect_clicked(self, **event_args):
     # connString = self.ip_address_box.text
     email = self.useremail.text
     password = self.password.text
     connString = self.mongoConnect.text
+    # self.connectingstring = connString
     
     success, message = anvil.server.call('connect_to_mongodb', connString)
     alert(message)
     if message:
       alert("Signup successful.")
-      open_form(home())
+      open_form(home(connString))
     else:
         alert("Signup failed.")
           
   def websitelink_click(self, **event_args):
     """This method is called when the link is clicked"""
     anvil.js.window.location.href = "https://connectivialabs.com/"
+
 

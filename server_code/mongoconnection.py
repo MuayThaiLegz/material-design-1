@@ -120,21 +120,57 @@ def list_collections(conn_string, db_name):
     except Exception as e:
         return ["Error: " + str(e)]
 
+
 @anvil.server.callable
 def fetch_collection_data(conn_string, db_name, collection_name):
     try:
         client = MongoClient(conn_string)
         db = client[db_name]
         collection = db[collection_name]
-        df = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
-        data = df.to_dict('records')
-        columns = df.columns.tolist()    
+        collectionret = pd.DataFrame(list(collection.find({}, {'_id': False})))  # Assuming you don't want to send MongoDB's _id field to the client
+        dataasmarkdown = collectionret.head(25).to_markdown()
+        df = collectionret.to_dict('records')
+        columns = collectionret.columns.tolist()    
         client.close()
-        return data, columns
+        return df, columns, dataasmarkdown
     except Exception as e:
+        print({"Error": str(e)})
         return [{"Error": str(e)}]
       
 @anvil.server.callable
 def initiate_file_processing(file, db_name, collection_name, connString):
     anvil.server.launch_background_task('store_data', file, db_name, collection_name, connString)
     return "Processing started"
+
+
+# @anvil.server.callable
+# def fetch_collection_data(conn_string, db_name, collection_name, page=1, page_size=25):
+#     try:
+#         client = MongoClient(conn_string)
+#         db = client[db_name]
+#         collection = db[collection_name]
+        
+#         # Calculate pagination offsets
+#         skip = (page - 1) * page_size
+#         limit = page_size
+        
+#         # Fetch paginated data
+#         collection_page = pd.DataFrame(list(collection.find({}, {'_id': False}).skip(skip).limit(limit)))
+        
+#         # Check if there's more data beyond the current page
+#         more_data = collection.count_documents({}) > page * page_size
+        
+#         # Generate markdown for current page
+#         dataasmarkdown = collection_page.to_markdown()
+        
+#         # Convert page of DataFrame to dict for transmission
+#         df_page = collection_page.to_dict('records')
+        
+#         columns = collection_page.columns.tolist()
+        
+#         client.close()
+#         return df_page, columns, dataasmarkdown, more_data
+#     except Exception as e:
+#         print({"Error": str(e)})
+#         return [{"Error": str(e)}], [], "", False
+

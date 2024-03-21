@@ -7,8 +7,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-# from ..home import home
-# from ..base import base
+
 
 class signup(signupTemplate):
     def __init__(self, **properties):
@@ -52,12 +51,10 @@ class signup(signupTemplate):
         else:
           anvil.server.call('create_db')
           message = anvil.server.call('sign_up', email, password)
-          
-        alert(message)
-        if message:
-            alert("Signup successful.")
-            open_form(home())
-        else:
+          if message:
+            alert("Signup successful. Returning to main page")
+            open_form('base')
+          else:
             alert("Signup failed.")
           
       

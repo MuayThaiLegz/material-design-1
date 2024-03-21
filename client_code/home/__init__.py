@@ -24,6 +24,9 @@ class home(homeTemplate):
     def __init__(self, mongoConnect, **properties):
         self.init_components(**properties)
         self.mongoConnect = mongoConnect
+        self.page = 1
+        self.page_size = 25
+        self.more_data = True  # Assume more data until proven otherwise
         # Setup UI and fetch initial data
         self.setup_ui()
         self.fetch_datasets()
@@ -31,6 +34,8 @@ class home(homeTemplate):
     def setup_ui(self):
         self.content_panel = ColumnPanel()
         self.data_grid_placeholder = FlowPanel()
+        self.rich_text_data = RichText()
+        self.content_panel.add_component(self.rich_text_data)
         self.add_component(self.content_panel)
         self.content_panel.add_component(self.data_grid_placeholder)
         
@@ -43,15 +48,28 @@ class home(homeTemplate):
     def setup_feedback_label(self):
         self.feedback_label = Label(text="", font_size=16, bold=True, align='center', visible=False)
         self.content_panel.add_component(self.feedback_label)
-
+      
     def setup_nav_links(self):
-        self.nav_links = {'Analytics': analytics, 'Anomaly Detection': anomalydetection,
-                          'Edge Vectors': edgevectors, 'Multi Sense': multisense}
-        for name, form in self.nav_links.items():
-            link = Link(text=name, align="center")
-            link.set_event_handler('click', lambda sender, **e: self.open_feature_form(form))
-            self.add_component(link)
+      self.nav_links = {
+          'Analytics': analytics,
+          'Anomaly Detection': anomalydetection,
+          'Edge Vectors': edgevectors,
+          'Multi Sense': multisense
+      }
+      for name, form in self.nav_links.items():
+          link = Link(text=name, align="center")
+          # Pass the form to be opened as an argument to the event handler.
+          link.tag.form_to_open = form
+          link.set_event_handler('click', self.open_feature_form)
+          self.add_component(link)
 
+    def open_feature_form(self, sender, **event_args):
+      # Retrieve the form to open from the tag property of the sender.
+      form = sender.tag.form_to_open
+      self.content_panel.clear()
+      self.content_panel.add_component(form())
+
+      
     def setup_dataset_controls(self):
         self.dataset_radio_panel = FlowPanel(width='fill')
         self.content_panel.add_component(self.dataset_radio_panel)
@@ -101,21 +119,43 @@ class home(homeTemplate):
   
     def on_collection_selected(self, sender, **event_args):
       collection_name = sender.selected_value
-      data, columns = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
-      if data:
-          self.populate_data_simulated_grid(data[:10], columns)
+      df, columns, dataasmarkdown = anvil.server.call('fetch_collection_data', self.mongoConnect, self.selected_dataset, collection_name)
+      # dataasmarkdown = dataasmarkdown.style.set_properties(**{'background-color': 'yellow'}).render()
+
+      if df:
+          try:
+            self.display_data_as_markdown(dataasmarkdown)
+            
+          except anvil.server.RuntimeUnavailableError as e:
+            data_as_string = self.media_to_string(data_media)
+            self.display_data_as_markdown(data_as_string)
+            
       else:
           self.display_feedback(False, "No data found for the selected collection.")
+    
+    def media_to_string(self, media):
+      """Convert a Media object to a string."""
+      with anvil.media.TempFile(media) as filename:
+          with open(filename, "r") as file:
+              content = file.read()
+      return content
+    
+    def display_data_as_markdown(self, dataasmarkdown):
+      # Display the markdown representation of the DataFrame in the RichText component
+      self.rich_text_data.content = dataasmarkdown
+      self.data_grid_placeholder.visible = False  # Hide the data grid placeholder if it's not used
 
+
+  
     def populate_data_simulated_grid(self, data, columns):
-      
-        self.data_grid_placeholder.clear()  # Clear previous content
-        for row_data in data:
-            row_panel = FlowPanel()  # This will represent a row
-            for column_name in columns:
-                cell_label = Label(text=str(row_data[column_name]), width=200)  # Create a label for each cell
-                row_panel.add_component(cell_label)
-            self.data_grid_placeholder.add_component(row_panel)  # Add the row to the placeholder
+      print(data)
+      self.data_grid_placeholder.clear()  # Clear previous content
+      for row_data in data:
+          row_panel = FlowPanel()  # This will represent a row
+          for column_name in columns:
+              cell_label = Label(text=str(row_data[column_name]), width=200)  # Create a label for each cell
+              row_panel.add_component(cell_label)
+          self.data_grid_placeholder.add_component(row_panel)  # Add the row to the placeholder
 
     def create_and_populate_data_grid(self, data, columns):
       self.data_grid_placeholder.clear()
@@ -124,9 +164,6 @@ class home(homeTemplate):
       data_grid.items = data
       self.data_grid_placeholder.add_component(data_grid)
 
-    def open_feature_form(self, form):
-        self.content_panel.clear()
-        self.content_panel.add_component(form())
 
     def display_feedback(self, success, message):
         self.feedback_label.text = message
