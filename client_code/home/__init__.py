@@ -19,72 +19,7 @@ from ..anomalydetection import anomalydetection
 from ..edgevectors import edgevectors
 from ..multisense import multisense
 
-# class home(homeTemplate):
-#     def __init__(self, mongoConnect, **properties):
-#         self.mongoConnect = mongoConnect
-#         self.init_components(**properties)
-#         self.setup_ui()
-        
-#     def setup_ui(self):
-#         # Title and Feedback Label
-#         self.add_component(Label(text="Cognitive Data Portal", font="Arial, sans-serif", font_size=24, bold=True))
-#         self.feedback_label = Label(text="", visible=False)
-#         self.add_component(self.feedback_label)
-        
-#         # Dataset and Collection Dropdowns
-#         self.dataset_dropdown = DropDown()
-#         self.dataset_dropdown.set_event_handler('change', self.on_dataset_selected)
-#         self.add_component(self.dataset_dropdown)
-        
-#         self.collection_dropdown = DropDown(visible=False)
-#         self.collection_dropdown.set_event_handler('change', self.on_collection_selected)
-#         self.add_component(self.collection_dropdown)
-        
-#         # DataGrid Placeholder
-#         self.data_grid_placeholder = FlowPanel()
-#         self.add_component(self.data_grid_placeholder)
-        
-#         # Fetch Datasets
-#         self.fetch_datasets()
-        
-#     def fetch_datasets(self):
-#         success, datasets = anvil.server.call('get_database_names', self.mongoConnect)
-#         if success:
-#             self.dataset_dropdown.items = [('Select a dataset', None)] + [(d, d) for d in datasets]
-#             self.feedback_label.text = "Select a dataset to begin."
-#             self.feedback_label.visible = True
-#         else:
-#             self.display_feedback(False, "Failed to fetch datasets.")
-            
-#     def on_dataset_selected(self, sender, **event_args):
-#         dataset_name = sender.selected_value
-#         if dataset_name:
-#             collections = anvil.server.call('list_collections', self.mongoConnect, dataset_name)
-#             self.collection_dropdown.items = [('Select a collection', None)] + [(c, c) for c in collections]
-#             self.collection_dropdown.visible = True
-#             self.display_feedback(True, "Dataset selected. Please select a collection.")
-    
-#     def on_collection_selected(self, sender, **event_args):
-#         collection_name = sender.selected_value
-#         if collection_name:
-#             data, columns = anvil.server.call('fetch_collection_data', self.mongoConnect, self.dataset_dropdown.selected_value, collection_name)
-#             if data:
-#                 self.display_data_in_grid(data[:10], columns)  # Display first 10 rows
-#             else:
-#                 self.display_feedback(False, "No data found for the selected collection.")
-                
-#     def display_data_in_grid(self, data, columns):
-#         self.data_grid_placeholder.clear()
-#         data_grid = DataGrid()
-#         data_grid.columns = [DataGridColumn(title=col, data_key=col, width=200) for col in columns]
-#         data_grid.items = data
-#         self.data_grid_placeholder.add_component(data_grid)
-    
-#     def display_feedback(self, success, message):
-#         self.feedback_label.text = message
-#         self.feedback_label.foreground = "#4CAF50" if success else "#F44336"
-#         self.feedback_label.visible = True
-      
+
 class home(homeTemplate):
     def __init__(self, mongoConnect, **properties):
         self.init_components(**properties)
@@ -182,7 +117,6 @@ class home(homeTemplate):
                 row_panel.add_component(cell_label)
             self.data_grid_placeholder.add_component(row_panel)  # Add the row to the placeholder
 
-  
     def create_and_populate_data_grid(self, data, columns):
       self.data_grid_placeholder.clear()
       data_grid = DataGrid(auto_header=True)
