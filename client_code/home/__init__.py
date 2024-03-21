@@ -24,17 +24,14 @@ class home(homeTemplate):
     def __init__(self, mongoConnect, **properties):
         self.init_components(**properties)
         self.mongoConnect = mongoConnect
-        self.page = 1
-        self.page_size = 25
-        self.more_data = True  # Assume more data until proven otherwise
-        # Setup UI and fetch initial data
+        self.selected_dataset = None
         self.setup_ui()
         self.fetch_datasets()
 
     def setup_ui(self):
         self.content_panel = ColumnPanel()
         self.data_grid_placeholder = FlowPanel()
-        self.rich_text_data = RichText()
+        self.rich_text_data = RichText(role="horizontal_scroll")
         self.content_panel.add_component(self.rich_text_data)
         self.add_component(self.content_panel)
         self.content_panel.add_component(self.data_grid_placeholder)

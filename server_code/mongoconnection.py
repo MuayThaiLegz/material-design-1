@@ -102,7 +102,7 @@ def get_database_names(connString):
         client = MongoClient(connString)
         # List database names
         db_nameslist = client.list_database_names()
-        db_names = [i for i in db_nameslist if i not in ['Models_evaluation', 'Modelsdb','admin','config','local']]
+        db_names = [i for i in db_nameslist if i not in ['Models_evaluation', 'Modelsdb','admin','config','local',"document_embeddings_database", "embed2"]]
         # db_names = [i for i in client.list_database_names() if i not in ['Models_evaluation', 'Modelsdb','admin','config','local']]
 
         return True, db_names
