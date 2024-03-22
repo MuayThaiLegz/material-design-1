@@ -8,11 +8,11 @@ from anvil.tables import app_tables
 
 
 class analytics(analyticsTemplate):
-    def __init__(self, df, html_content, **properties):
+    def __init__(self, df,  html_content, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        self.content_panel = ColumnPanel()
-        self.content_panel.add_component(Label(text="analytics", italic=True))
+        # self.content_panel = ColumnPanel()
+        # self.content_panel.add_component(Label(text="analytics", italic=True))
         
         self.back_button = Button(text="Back to Home")
         self.back_button.set_event_handler('click', self.back_to_home_clicked)
